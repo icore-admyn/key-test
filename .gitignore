@@ -1,0 +1,17 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Logs and other generated files
+*.log
+npm-debug.log*
+
+# Editor-specific files
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# Other project-specific files
+/dist/

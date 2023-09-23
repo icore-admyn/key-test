@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Test</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="container mt-5">
+    <main>
+        <form id="form" class="mb-4">
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input id='amount' type="number" class="form-control" placeholder="100" required>
+            </div>
+            <div class="form-group">
+                <label for="url">URL:</label>
+                <input id='url' type="text" class="form-control" placeholder="https://test.icorepay.io/v1" required>
+            </div>
+            <div class="form-group">
+                <label for="key">Key:</label>
+                <input id='key' type="text" class="form-control" placeholder="eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE..." required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="output" class="hidden">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Link</th>
+                        <th>Merchant Recieves</th>
+                        <th>User Pays</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a id="userPaysAll" target="_blank">User Pays All</a></td>
+                        <td><span id="merchantRecievesUserPaysAll"></span></td>
+                        <td><span id="userPaysUserPaysAll"></span></td>
+                    </tr>
+                    <tr>
+                        <td><a id="userPaysCheckoutFees" target="_blank">User Pays Checkout Fee</a></td>
+                        <td><span id="merchantRecievesUserPaysCheckoutFee"></span></td>
+                        <td><span id="userPaysUserPaysCheckoutFee"></span></td>
+                    </tr>
+                    <tr>
+                        <td><a id="merchantPaysAll" target="_blank">Merchant Pays All</a></td>
+                        <td><span id="merchantRecievesMerchantPaysAll"></span></td>
+                        <td><span id="userPaysMerchantPaysAll"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const amount = document.getElementById('amount').value;
+            const url = document.getElementById('url').value;
+            const key = document.getElementById('key').value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/fee-shift?amount=${amount}&url=${url}&key=${key}`, true);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    const feeShiftedAmount = response.feeShiftedAmount;
+                    const merchantRecieves = {
+                        userPaysAll: feeShiftedAmount.userPaysAllInput,
+                        userPaysCheckoutFee: feeShiftedAmount.userPaysCheckoutFeeInput,
+                        merchantPaysAll: feeShiftedAmount.merchantPaysAllInput,
+                    }
+                    const userPays = {
+                        userPaysAll: feeShiftedAmount.userPaysAllOutput,
+                        userPaysCheckoutFee: feeShiftedAmount.userPaysCheckoutFeeOutput,
+                        merchantPaysAll: feeShiftedAmount.merchantPaysAllOutput,
+                    }
+                    const links = {
+                        userPaysAll: feeShiftedAmount.userPaysAllURL,
+                        userPaysCheckoutFee: feeShiftedAmount.userPaysCheckoutFeeURL,
+                        merchantPaysAll: feeShiftedAmount.merchantPaysAllURL,
+                    }
+
+                    console.log('merchantRecieves:', merchantRecieves)
+                    console.log('userPays:', userPays)
+                    console.log('links:', links)
+
+                    document.getElementById('merchantRecievesUserPaysAll').innerText = merchantRecieves.userPaysAll !== null ? merchantRecieves.userPaysAll + ' BUX' : 'N/A';;
+                    document.getElementById('userPaysUserPaysAll').innerText = userPays.userPaysAll !== null ? '$' + userPays.userPaysAll : 'N/A';;
+                    document.getElementById('userPaysAll').setAttribute(links.userPaysAll !== null ? 'href' : '', links.userPaysAll !== null ? links.userPaysAll : '');
+                    
+                    document.getElementById('merchantRecievesUserPaysCheckoutFee').innerText = merchantRecieves.userPaysCheckoutFee !== null ? merchantRecieves.userPaysCheckoutFee + ' BUX' : 'N/A';
+                    document.getElementById('userPaysUserPaysCheckoutFee').innerText = userPays.userPaysCheckoutFee !== null ? '$' + userPays.userPaysCheckoutFee : 'N/A';
+                    document.getElementById('userPaysCheckoutFees').setAttribute(links.userPaysCheckoutFee !== null ? 'href' : '', links.userPaysCheckoutFee !== null ? links.userPaysCheckoutFee : '');
+
+                    document.getElementById('merchantRecievesMerchantPaysAll').innerText = merchantRecieves.merchantPaysAll !== null ? merchantRecieves.merchantPaysAll + ' BUX' : 'N/A';
+                    document.getElementById('userPaysMerchantPaysAll').innerText = userPays.merchantPaysAll !== null ? '$' + userPays.merchantPaysAll : 'N/A';
+                    document.getElementById('merchantPaysAll').setAttribute(links.merchantPaysAll !== null ? 'href' : '', links.merchantPaysAll !== null ? links.merchantPaysAll : '');
+
+                    // Show the output
+                    document.getElementById('output').classList.remove('hidden');
+                } else {
+                    document.getElementById('output').innerText = 'Error occurred while fetching fee shifted amount';
+                }
+            };
+
+            xhr.send();
+        });
+    </script>
+</body>
+
+</html>
