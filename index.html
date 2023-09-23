@@ -96,7 +96,7 @@
                     console.log('links:', links)
 
                     document.getElementById('merchantRecievesUserPaysAll').innerText = merchantRecieves.userPaysAll !== null ? merchantRecieves.userPaysAll + ' BUX' : 'N/A';;
-                    document.getElementById('userPaysUserPaysAll').innerText = userPays.userPaysAll !== null ? '$' + userPays.userPaysAll : 'N/A';;
+                    document.getElementById('userPaysUserPaysAll').innerText = userPays.userPaysAll !== null ? '~ $' + userPays.userPaysAll : 'N/A';;
                     document.getElementById('userPaysAll').setAttribute(links.userPaysAll !== null ? 'href' : '', links.userPaysAll !== null ? links.userPaysAll : '');
                     
                     document.getElementById('merchantRecievesUserPaysCheckoutFee').innerText = merchantRecieves.userPaysCheckoutFee !== null ? merchantRecieves.userPaysCheckoutFee + ' BUX' : 'N/A';
