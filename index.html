@@ -97,15 +97,15 @@
 
                     document.getElementById('merchantRecievesUserPaysAll').innerText = merchantRecieves.userPaysAll !== null ? merchantRecieves.userPaysAll + ' BUX' : 'N/A';;
                     document.getElementById('userPaysUserPaysAll').innerText = userPays.userPaysAll !== null ? '~ $' + userPays.userPaysAll : 'N/A';;
-                    document.getElementById('userPaysAll').setAttribute(links.userPaysAll !== null ? 'href' : '', links.userPaysAll !== null ? links.userPaysAll : '');
+                    document.getElementById('userPaysAll').setAttribute(links.userPaysAll !== '/' ? 'href' : '', links.userPaysAll !== '/' ? links.userPaysAll : '');
                     
                     document.getElementById('merchantRecievesUserPaysCheckoutFee').innerText = merchantRecieves.userPaysCheckoutFee !== null ? merchantRecieves.userPaysCheckoutFee + ' BUX' : 'N/A';
                     document.getElementById('userPaysUserPaysCheckoutFee').innerText = userPays.userPaysCheckoutFee !== null ? '$' + userPays.userPaysCheckoutFee : 'N/A';
-                    document.getElementById('userPaysCheckoutFees').setAttribute(links.userPaysCheckoutFee !== null ? 'href' : '', links.userPaysCheckoutFee !== null ? links.userPaysCheckoutFee : '');
+                    document.getElementById('userPaysCheckoutFees').setAttribute(links.userPaysCheckoutFee !== '/' ? 'href' : '', links.userPaysCheckoutFee !== '/' ? links.userPaysCheckoutFee : '');
 
                     document.getElementById('merchantRecievesMerchantPaysAll').innerText = merchantRecieves.merchantPaysAll !== null ? merchantRecieves.merchantPaysAll + ' BUX' : 'N/A';
                     document.getElementById('userPaysMerchantPaysAll').innerText = userPays.merchantPaysAll !== null ? '$' + userPays.merchantPaysAll : 'N/A';
-                    document.getElementById('merchantPaysAll').setAttribute(links.merchantPaysAll !== null ? 'href' : '', links.merchantPaysAll !== null ? links.merchantPaysAll : '');
+                    document.getElementById('merchantPaysAll').setAttribute(links.merchantPaysAll !== '/' ? 'href' : '', links.merchantPaysAll !== '/' ? links.merchantPaysAll : '');
 
                     // Show the output
                     document.getElementById('output').classList.remove('hidden');
