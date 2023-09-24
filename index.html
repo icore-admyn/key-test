@@ -58,11 +58,16 @@
                 </tbody>
             </table>
         </div>
+        <div id="loading" class="hidden">
+            <p>Loading...</p>
+        </div>
     </main>
 
     <script>
         document.getElementById('form').addEventListener('submit', function (e) {
             e.preventDefault();
+
+            document.getElementById('loading').classList.remove('hidden');
 
             const amount = document.getElementById('amount').value;
             const url = document.getElementById('url').value;
@@ -113,7 +118,7 @@
                     document.getElementById('output').innerText = 'Error occurred while fetching fee shifted amount';
                 }
             };
-
+            document.getElementById('loading').classList.add('hidden');
             xhr.send();
         });
     </script>
