@@ -110,7 +110,29 @@ app.get('/fee-shift', async (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 80;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+let server;
+
+const PORT_HTTP = process.env.PORT || 800;
+const PORT_HTTPS = 443;
+
+if (process.env.SSL_CERTIFICATE && process.env.SSL_PRIVATE_KEY) {
+    // HTTPS configuration if SSL certificate and private key are provided
+    const https = require('https');
+    const fs = require('fs');
+
+    const options = {
+        cert: fs.readFileSync(process.env.SSL_CERTIFICATE),
+        key: fs.readFileSync(process.env.SSL_PRIVATE_KEY)
+    };
+
+    server = https.createServer(options, app);
+    
+    server.listen(PORT_HTTPS, () => {
+        console.log(`Server is running on https://localhost:${PORT_HTTPS}`);
+    });
+} else {
+    // HTTP configuration
+    server = app.listen(PORT_HTTP, () => {
+        console.log(`Server is running on http://localhost:${PORT_HTTP}`);
+    });
+}
