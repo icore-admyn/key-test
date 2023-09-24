@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { decodeSubjectChain, calculateNet, calculateGross } = require('relay-jwt');
 const jwa = require('jwa');
 const { default: axios } = require('axios');
+require('dotenv').config();
 
 const app = express();
 const algorithm = 'ES256';
@@ -112,7 +113,7 @@ app.get('/fee-shift', async (req, res) => {
 // Start the server
 let server;
 
-const PORT_HTTP = process.env.PORT || 800;
+const PORT_HTTP = process.env.PORT || 80;
 const PORT_HTTPS = 443;
 
 if (process.env.SSL_CERTIFICATE && process.env.SSL_PRIVATE_KEY) {
