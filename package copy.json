@@ -9,15 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "axios": "^1.5.0",
-    "bootstrap": "^5.3.2",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "jwa": "^2.0.0",
     "next": "13.5.2",
-    "nodemon": "^3.0.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "relay-jwt": "^1.1.2"
+    "react-dom": "18.2.0"
   }
 }

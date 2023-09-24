@@ -26,7 +26,8 @@
             </div>
             <div class="form-group">
                 <label for="key">Key:</label>
-                <input id='key' type="text" class="form-control" placeholder="eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE..." required>
+                <input id='key' type="text" class="form-control"
+                    placeholder="eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE..." required>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
@@ -79,21 +80,26 @@
             xhr.onload = function () {
                 if (xhr.status === 200) {
                     const response = JSON.parse(xhr.responseText);
-                    const feeShiftedAmount = response.feeShiftedAmount;
+                    const data = response.feeShiftedAmount;
+
+                    if (data.error) {
+                        console.log(data.error)
+                    }
+
                     const merchantRecieves = {
-                        userPaysAll: feeShiftedAmount.userPaysAllInput,
-                        userPaysCheckoutFee: feeShiftedAmount.userPaysCheckoutFeeInput,
-                        merchantPaysAll: feeShiftedAmount.merchantPaysAllInput,
+                        userPaysAll: data.userPaysAllInput,
+                        userPaysCheckoutFee: data.userPaysCheckoutFeeInput,
+                        merchantPaysAll: data.merchantPaysAllInput,
                     }
                     const userPays = {
-                        userPaysAll: feeShiftedAmount.userPaysAllOutput,
-                        userPaysCheckoutFee: feeShiftedAmount.userPaysCheckoutFeeOutput,
-                        merchantPaysAll: feeShiftedAmount.merchantPaysAllOutput,
+                        userPaysAll: data.userPaysAllOutput,
+                        userPaysCheckoutFee: data.userPaysCheckoutFeeOutput,
+                        merchantPaysAll: data.merchantPaysAllOutput,
                     }
                     const links = {
-                        userPaysAll: feeShiftedAmount.userPaysAllURL,
-                        userPaysCheckoutFee: feeShiftedAmount.userPaysCheckoutFeeURL,
-                        merchantPaysAll: feeShiftedAmount.merchantPaysAllURL,
+                        userPaysAll: data.userPaysAllURL,
+                        userPaysCheckoutFee: data.userPaysCheckoutFeeURL,
+                        merchantPaysAll: data.merchantPaysAllURL,
                     }
 
                     console.log('merchantRecieves:', merchantRecieves)
@@ -103,7 +109,7 @@
                     document.getElementById('merchantRecievesUserPaysAll').innerText = merchantRecieves.userPaysAll !== null ? merchantRecieves.userPaysAll + ' BUX' : 'N/A';;
                     document.getElementById('userPaysUserPaysAll').innerText = userPays.userPaysAll !== null ? '~ $' + userPays.userPaysAll : 'N/A';;
                     document.getElementById('userPaysAll').setAttribute(links.userPaysAll !== '/' ? 'href' : '', links.userPaysAll !== '/' ? links.userPaysAll : '');
-                    
+
                     document.getElementById('merchantRecievesUserPaysCheckoutFee').innerText = merchantRecieves.userPaysCheckoutFee !== null ? merchantRecieves.userPaysCheckoutFee + ' BUX' : 'N/A';
                     document.getElementById('userPaysUserPaysCheckoutFee').innerText = userPays.userPaysCheckoutFee !== null ? '$' + userPays.userPaysCheckoutFee : 'N/A';
                     document.getElementById('userPaysCheckoutFees').setAttribute(links.userPaysCheckoutFee !== '/' ? 'href' : '', links.userPaysCheckoutFee !== '/' ? links.userPaysCheckoutFee : '');
@@ -114,11 +120,12 @@
 
                     // Show the output
                     document.getElementById('output').classList.remove('hidden');
+                    document.getElementById('loading').classList.add('hidden');
                 } else {
                     document.getElementById('output').innerText = 'Error occurred while fetching fee shifted amount';
                 }
             };
-            document.getElementById('loading').classList.add('hidden');
+
             xhr.send();
         });
     </script>

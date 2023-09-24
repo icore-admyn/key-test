@@ -38,8 +38,7 @@ const requestInvoice = async (amount, url, key) => {
         return payURL;
     } catch (error) {
         console.error('Error:', error);
-        const payURL = '/';
-        return payURL;
+        return error;
     }
     
 }
@@ -67,6 +66,13 @@ const feeShifting = async (amount, url, key) => {
         const userPaysCheckoutFeeURL = await requestInvoice(merchantPaysCheckoutFees, url, key)
         const merchantPaysAllURL = await requestInvoice(netAmountForDollar, url, key)
 
+        if (userPaysAllURL.status === 404) {
+            const output = {
+                error: `An error retreving the invoice: ${userPaysAllURL.message}`
+            }
+            return output;
+        }
+
         const output = {
             userPaysAllInput: parseFloat(amount),
             userPaysAllOutput: userPaysAll.toFixed(4),
@@ -86,15 +92,7 @@ const feeShifting = async (amount, url, key) => {
         // Log an error message if decoding the key fails and return oringinal amount
         console.error("An error occurred decoding the key:", error);
         const output = {
-            userPaysAllInput: amount,
-            userPaysAllOutput: null,
-            userPaysAllURL: '/',
-            userPaysCheckoutFeeInput: null,
-            userPaysCheckoutFeeOutput: null,
-            userPaysCheckoutFeeURL: '/',
-            merchantPaysAllInput: null,
-            merchantPaysAllOutput: null,
-            merchantPaysAllURL: '/',
+            error: `An error occurred decoding the key: ${error}`
         }
         return output;
     }
@@ -112,7 +110,7 @@ app.get('/fee-shift', async (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
