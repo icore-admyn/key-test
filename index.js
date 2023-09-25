@@ -55,7 +55,7 @@ const feeShifting = async (amount, url, key) => {
         const decodedChain = decodeSubjectChain(decoded.sub, ecdsa.verify);
         const buxDecimals = 4;
         const badgerFixedFee = 0;
-        const badgerVarFee = 0.05;
+        const badgerVarFee = 0.0504;
         const amountWithoutBadgerFees = (amount - badgerFixedFee) / (1 + badgerVarFee);
         const amountWithBadgerFees = ((1 + badgerVarFee) * amount) + badgerFixedFee;
         const netAmountForDollar = +calculateNet(amountWithoutBadgerFees, decodedChain, buxDecimals).toFixed(4);
