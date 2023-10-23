@@ -41,10 +41,38 @@ const requestInvoice = async (amount, url, key) => {
         console.error('Error:', error);
         return error;
     }
-    
+
+}
+
+const getMerchantAmount = (target, rates, decimals = 1) => {
+    const estimatedFeeFactor = rates.reduce((acc, rate) => acc * (1 + rate), 1) * 1.05;
+    console.log("estimatedFeeFactor", estimatedFeeFactor);
+    const rangeStart = +(target / (estimatedFeeFactor + 0.01)).toFixed(4);
+    const rangeEnd = +(target / (estimatedFeeFactor - 0.01)).toFixed(4);
+    console.log("range", rangeStart, rangeEnd);
+    const step = 10 ** (-decimals);
+    console.log("step", step);
+    let merchantAmount;
+    for (let m = rangeStart; m < rangeEnd; m = +(m + step).toFixed(4)) {
+        const tokenAmount = rates.reduce((accumulator, rate) => +(accumulator * (1 + rate)).toFixed(4), m);
+        const purchaseTokenAmount = +(Math.ceil(tokenAmount * 100) / 100).toFixed(2);
+        const totalAmount = +(Number((purchaseTokenAmount * 1.01).toFixed(2)) + Number((Number((purchaseTokenAmount * 1.01).toFixed(2)) * 0.04).toFixed(2))).toFixed(2);
+        console.log("m", m, "TA", totalAmount);
+
+        if (totalAmount === target) {
+            merchantAmount = m;
+            break;
+        }
+    }
+
+    console.log("merchantAmount", merchantAmount);
+
+    return merchantAmount || getMerchantAmount(target, rates, decimals + 1);
 }
 
 const feeShifting = async (amount, url, key) => {
+    const amountSantized = parseFloat(amount);
+
     try {
         if (key === undefined) {
             console.log('Key undefined')
@@ -56,9 +84,19 @@ const feeShifting = async (amount, url, key) => {
         const buxDecimals = 4;
         const badgerFixedFee = 0;
         const badgerVarFee = 0.0504;
+
+        const getRates = () => {
+            const array = [];
+            decodedChain.forEach((obj) => {
+                array.push(obj.amount / 1000);
+            })
+            return array;
+        };
+        const rates = getRates();
+
         const amountWithoutBadgerFees = (amount - badgerFixedFee) / (1 + badgerVarFee);
         const amountWithBadgerFees = ((1 + badgerVarFee) * amount) + badgerFixedFee;
-        const netAmountForDollar = +calculateNet(amountWithoutBadgerFees, decodedChain, buxDecimals).toFixed(4);
+        const netAmountForDollar = getMerchantAmount(amountSantized, rates);
         const grossAmountForDollar = +calculateGross(parseFloat(amount), decodedChain, buxDecimals).toFixed(4);
         const merchantPaysCheckoutFees = +calculateNet(parseFloat(amount), decodedChain, buxDecimals).toFixed(4);
         const userPaysAll = ((1 + badgerVarFee) * grossAmountForDollar) + badgerFixedFee;
@@ -127,7 +165,7 @@ if (process.env.SSL_CERTIFICATE && process.env.SSL_PRIVATE_KEY) {
     };
 
     server = https.createServer(options, app);
-    
+
     server.listen(PORT_HTTPS, () => {
         console.log(`Server is running on https://localhost:${PORT_HTTPS}`);
     });
